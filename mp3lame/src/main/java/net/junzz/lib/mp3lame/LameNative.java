@@ -24,6 +24,14 @@
 
 package net.junzz.lib.mp3lame;
 
+import android.support.annotation.Keep;
+
+/**
+ * 调用 Lame 的 JNI
+ * <p>
+ * 使用方式请阅读 API 文件
+ */
+@Keep
 public class LameNative {
 
     static {
