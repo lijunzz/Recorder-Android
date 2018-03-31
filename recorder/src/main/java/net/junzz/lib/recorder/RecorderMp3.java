@@ -28,13 +28,14 @@ import net.junzz.lib.mp3lame.LameNative;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  * 录制 MP3 音频。
  */
 class RecorderMp3 implements Recorder {
 
-    private static final String TAG = RecorderMp3.class.getSimpleName();
+    private static final String TAG = "RecorderMp3";
     // 采样率
     private static final int AUDIO_SAMPLE_RATE = 32000;
 
@@ -42,10 +43,13 @@ class RecorderMp3 implements Recorder {
     private final LameNative mLame = new LameNative();
     private AudioRecord mMp3Recorder;
     private FileOutputStream mFileOutputStream;
+    private RandomAccessFile mRandomAccessFile;
 
     @Override
     public void prepare(@NonNull File file) throws IOException {
-        mFileOutputStream = new FileOutputStream(file);
+        // 防止传入的文件未创建。
+        mRandomAccessFile = new RandomAccessFile(file, "rws");
+        mFileOutputStream = new FileOutputStream(mRandomAccessFile.getFD());
 
         // 初始化 AudioRecord
         int minBuffSize = AudioRecord.getMinBufferSize(AUDIO_SAMPLE_RATE,
@@ -119,8 +123,15 @@ class RecorderMp3 implements Recorder {
         }
         try {
             mFileOutputStream.close();
+            mFileOutputStream = null;
         } catch (IOException e) {
             Log.e(TAG, "Lame audio stream close failure.", e);
+        }
+        try {
+            mRandomAccessFile.close();
+            mRandomAccessFile = null;
+        } catch (IOException e) {
+            Log.e(TAG, "Audio 'RandomAccessFile' close failure.", e);
         }
     }
 
@@ -134,6 +145,7 @@ class RecorderMp3 implements Recorder {
     @Override
     public void release() {
         mMp3Recorder.release();
+        mMp3Recorder = null;
 
         int initResult = mLame.close();
         if (initResult != 0) {

@@ -33,6 +33,7 @@ class RecorderAac implements Recorder {
 
     @Override
     public void prepare(@NonNull File file) throws IOException {
+        mAacRecorder.reset();
         mAacRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mAacRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
         mAacRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
