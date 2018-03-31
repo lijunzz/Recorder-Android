@@ -17,38 +17,20 @@
 package net.junzz.lib.recorder;
 
 import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 
-import java.io.File;
-import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * 录制音频。
+ * 支持的音频格式。
  */
 @Keep
-public interface Recorder {
+@Retention(RetentionPolicy.SOURCE)
+@StringDef({RecorderModel.RECORDER_MODEL_AAC, RecorderModel.RECORDER_MODEL_MP3})
+public @interface RecorderModel {
 
-    /**
-     * 准备录音机开始捕捉和编码数据。
-     *
-     * @param file 音频保存的文件。
-     * @throws IOException 目标文件不可用。
-     */
-    void prepare(@NonNull File file) throws IOException;
-
-    /**
-     * 开始捕获数据并将其编码到 prepare() 指定的文件中。
-     */
-    void start();
-
-    /**
-     * 停止录制。
-     */
-    void stop();
-
-    /**
-     * 释放与此 Recorder 对象关联的资源。
-     */
-    void release();
+    String RECORDER_MODEL_AAC = "AAC";
+    String RECORDER_MODEL_MP3 = "MP3";
 
 }
