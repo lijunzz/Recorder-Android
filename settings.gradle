@@ -1,1 +1,1 @@
-include ':app', ':mp3lame'
+include ':example', ':mp3lame', ':recorder'
