@@ -1,0 +1,57 @@
+链接
+====
+
+[NDK 入门指南](https://developer.android.google.cn/ndk/guides/index.html)
+
+[Java 原生接口规范](https://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/jniTOC.html)
+
+[The LAME Project](http://lame.sourceforge.net/)
+
+记录
+====
+
+宏 `STDC_HEADERS` 未定义
+-----------------------
+
+在 machine.h 头文件中有根据 STDC_HEADERS 宏来导包，根据 [GUN 网站](https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Particular-Headers.html) 解释 
+`STDC_HEADERS` 检查系统是否具有符合 ANSI C89（ISO C90）的 C 头文件，但是在 Android Studio 中检测不到这个宏，因为 bits/c++config.h 不建议直接使用。
+
+```c
+/** @file bits/c++config.h
+ *  This is an internal header file, included by other library headers.
+ *  Do not attempt to use it directly. @headername{iosfwd}
+ */
+```
+
+**解决方式**
+
+可以直接导入
+```c
+# include <stdlib.h>
+# include <string.h>
+```
+或者定义这个宏
+```c
+# ifndef STDC_HEADERS
+#  define STDC_HEADERS
+# endif
+```
+
+在 id3tag.c 中重复定义类似的导入头文件语句，但id3tag.c导入machine.h，故可以直接将这段导入语句删除，而使用machine.h中定义的。
+```c
+#ifdef STDC_HEADERS
+# include <stddef.h>
+# include <stdlib.h>
+# include <string.h>
+# include <ctype.h>
+#else
+# ifndef HAVE_STRCHR
+#  define strchr index
+#  define strrchr rindex
+# endif
+char   *strchr(), *strrchr();
+# ifndef HAVE_MEMCPY
+#  define memcpy(d, s, n) bcopy ((s), (d), (n))
+# endif
+#endif
+```

@@ -75,8 +75,6 @@ public class RecorderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recorder_activity);
 
-        Log.d("TAG", "DDDDD:::" + BuildConfig.DEBUG);
-
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
         // 录制的文件可以在文件管理中播放。
